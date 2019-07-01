@@ -108,7 +108,7 @@ gulp.task('javascript', () => {
 });
 
 // Run All Asset Compilation Tasks
-gulp.task('compile', gulp.series('root', 'html', 'css', 'javascript'));
+gulp.task('compile', gulp.series('root', 'pug', 'css', 'javascript'));
 
 // Watch Task (gulp-watch)
 gulp.task('watch', (done) => {
