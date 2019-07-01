@@ -14,9 +14,9 @@ An HTML file uploader which provides both a traditional file upload experience u
 
 ## Configuration
 
-You can configure client side validation rules for the file size by changing the `data-file-size` attribute of the HTML file input to your desired value in bytes e.g `data-file-size="2097152"`.
+You can configure client side validation rules for the file size by changing the `data-file-size` attribute of the HTML file input to your desired value in bytes e.g. `data-file-size="2097152"`.
 
-You can configure client side validation rules for the file types by changing the `accept` attribute of the HTML file input to your desired string of file extension e.g. `accept=".jpeg, .png"`.
+You can configure client side validation rules for the file types by changing the `accept` attribute of the HTML file input to your desired, comma separated, string of file extensions e.g. `accept=".jpeg, .png"`.
 
 ## Browser Support
 
