@@ -1,0 +1,14 @@
+doctype html
+html(lang="en")
+  -var pugin = true
+  include ../elements/head.pug
+  body.vinternet
+    script.
+      document.body.classList.add ((document.body.classList) ? 'has-js' : document.body.classList.add('has-js'));
+    include ../elements/_elements.pug
+    include ../elements/header.pug
+    main
+      block content
+    include ../elements/footer.pug
+    script(src="/js/main.js")
+    block script

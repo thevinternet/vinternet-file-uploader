@@ -1,0 +1,55 @@
+{
+  "name": "vinternet-file-uploader",
+  "version": "1.0.0",
+  "description": "Vinternet File Uploader",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thevinternet/vinternet-file-uploader.git"
+  },
+  "author": "James Vinter",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thevinternet/vinternet-file-uploader/issues"
+  },
+  "homepage": "https://github.com/thevinternet/vinternet-file-uploader#readme",
+  "main": "server.js",
+  "scripts": {
+    "start": "gulp build",
+    "develop": "gulp local"
+  },
+  "engines": {
+    "node": "11.12.0",
+    "npm": "6.7.0"
+  },
+  "browserslist": [
+    "last 2 versions",
+    "> 2%",
+    "maintained node versions",
+    "not dead"
+  ],
+  "devDependencies": {
+    "autoprefixer": "^9.5.0",
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "css-mqpacker": "^7.0.0",
+    "cssnano": "^4.1.10",
+    "express": "^4.16.4",
+    "gulp": "^4.0.0",
+    "gulp-babel": "^8.0.0",
+    "gulp-changed": "^3.2.0",
+    "gulp-clean": "^0.4.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-deporder": "^1.1.0",
+    "gulp-pug": "^4.0.1",
+    "gulp-imagemin": "^5.0.3",
+    "gulp-nodemon": "^2.4.2",
+    "gulp-postcss": "^8.0.0",
+    "gulp-sass": "^4.0.2",
+    "gulp-strip-debug": "^3.0.0",
+    "gulp-uglify": "^3.0.2",
+    "gulp-watch": "^5.0.1",
+    "merge-stream": "^1.0.1",
+    "postcss-assets": "^5.0.0",
+    "sanitize.css": "^8.0.0"
+  }
+}

@@ -1,0 +1,40 @@
+extends ../layouts/layout.pug
+block content
+
+  .container#content
+    .userform
+      .card
+        h2 Your uploaded files must
+  
+        ul
+          li be less than 2MB
+          li be a PDF, Word, ODT, RTF or TXT document
+  
+        +form('/', 'get')(id='uploadForm')
+          .input-wrapper
+            .upload-container.status--standard#uploadContainer
+              .upload--icon(data-file-upload-icon='upload')
+                  include ../../images/upload-status.svg
+              .upload--control
+                p Drag and drop your file here <strong>or</strong>
+                input(name="file-upload" id="fileUpload" type="file" multiple required  data-error="Please upload your file(s)" data-file-size="2097152" accept=".pdf, .doc, .docx, .odt, .rtf, .txt")
+                label(class="btn--primary" for="fileUpload") Upload a file from this computer
+  
+            div(data-file-upload='status' aria-live='assertive')
+
+          +button--submit('button-submit', 'fileUploadSubmit', 'Submit', 'btn--primary')
+
+    .panel
+      .card
+        h3 Technologies:
+        ul
+          li HTML 5 (Pug compiled)
+          li CSS 3 (SASS compiled)
+          li JavaScript ES6 (Babel compiled)
+          li Node, Express and Gulp
+          li #[+link('https://github.com/thevinternet/vinternet-file-uploader', 'View project on GitHub')(title='View the Vinternet form validation repository on GitHub')]
+
+    ul.social
+      li #[+link('https://github.com/thevinternet/vinternet-file-uploader', 'GitHub')(title='View the Vinternet form validation repository on GitHub', class="github")]
+      li #[+link('https://twitter.com/thevinternet', 'Twitter')(title='Visit the Vinternet on Twitter', class="twitter")]
+      li #[+link('https://uk.linkedin.com/in/jamesvinter', 'LinkedIn')(title='Visit the Vinternet on LinkedIn', class="linkedin")]

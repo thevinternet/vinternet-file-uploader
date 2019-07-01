@@ -1,0 +1,24 @@
+/*-- Default Button --*/
+
+button {
+  width: 70%;
+  cursor: pointer;
+  color: inherit;
+  background-color: transparent;
+  padding: 0;
+  border: 0;
+  &:hover, &:focus {
+    text-decoration: underline;
+  }
+}
+
+/*-- Button Variants --*/
+
+.btn--primary {
+  @include button($white, $purple-1, $purple-2);
+}
+
+.btn--disabled {
+  @include button($grey-1, $grey-4, $grey-4);
+  pointer-events: none;
+}

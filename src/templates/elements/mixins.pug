@@ -1,0 +1,11 @@
+//- Links
+mixin link(href, name)
+  //- Attributes can include rel, role, target, title and tabindex
+  a(href=href)&attributes(attributes)= name
+    if block
+      block
+
+//- Images
+mixin image(src, alt)
+  //- Attributes can be width, height, srcset, longdesc
+  img(src=src alt=alt)&attributes(attributes)
