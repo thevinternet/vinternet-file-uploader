@@ -1,10 +1,10 @@
 # Vinternet Drag & Drop File Uploader
-An example of an accessible HTML file uploader which provides both a traditional file upload experience using the HTML input and drag and drop functionality. The solution also employs client side validation of the file size and file type uploaded which can be customised on the HTML input element directly.
+An HTML file uploader which provides both a traditional file upload experience using the HTML input as well as drag and drop functionality. The solution is built with accessibility in mind and employs client side validation to the file size and file type uploaded which can be customised on the HTML input element directly.
 
 ## Requirements
 
 * [NodeJS][nodejs] 6.0.0 and above
-* [PugJS][pug] Pug templating knowledge
+* [PugJS][pug] templating knowledge
 
 ## Setup & Usage
 
@@ -14,9 +14,9 @@ An example of an accessible HTML file uploader which provides both a traditional
 
 ## Configuration
 
-You can configure client side validation rules for the file size by changing the `data-file-size` attribute of the HTML file input to your desired value in bytes.
+You can configure client side validation rules for the file size by changing the `data-file-size` attribute of the HTML file input to your desired value in bytes e.g `data-file-size="2097152"`.
 
-You can configure client side validation rules for the file types by changing the `accept` attribute of the HTML file input to your desired string of file extension i.e. `.jpeg, .png`.
+You can configure client side validation rules for the file types by changing the `accept` attribute of the HTML file input to your desired string of file extension e.g. `accept=".jpeg, .png"`.
 
 ## Browser Support
 
