@@ -107,9 +107,6 @@ gulp.task('javascript', () => {
   return jsbuild.pipe(gulp.dest(build + 'js/'));
 });
 
-// Run All Asset Compilation Tasks
-gulp.task('compile', gulp.series('root', 'pug', 'css', 'javascript'));
-
 // Watch Task (gulp-watch)
 gulp.task('watch', (done) => {
   gulp.watch(src + 'images/**/*', gulp.parallel('images'));
@@ -140,8 +137,13 @@ gulp.task('server', (done) => {
   done();
 });
 
-// Run Local Build - Compile, Server & Watch Tasks
+// ********** BUILD TASKS ********** //
+
+// Clean Build Directory & Run All Asset Compilation Tasks
+gulp.task('compile', gulp.series('root', 'pug', 'css'));
+
+// Clean Build Directory & Run Local Build - Compile, Server & Watch Tasks
 gulp.task('local', gulp.series('compile', 'server', 'watch'));
 
-// Run Heroku Build - Compile & Server Tasks
-gulp.task('build', gulp.series('compile', 'server'));
+// Clean Build Directory & Run Heroku Build - Compile, JavaScript & Server Tasks
+gulp.task('build', gulp.series('compile', 'javascript', 'server'));

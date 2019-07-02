@@ -17,10 +17,10 @@ block content
                   include ../../images/upload-status.svg
               .upload--control
                 p Drag and drop your file here <strong>or</strong>
-                input(name="file-upload" id="fileUpload" type="file" multiple required  data-error="Please upload your file(s)" data-file-size="2097152" accept=".pdf, .doc, .docx, .odt, .rtf, .txt")
+                input(name="file-upload" id="fileUpload" type="file" data-file-size="2097152" accept=".pdf, .doc, .docx, .odt, .rtf, .txt"  multiple required)
                 label(class="btn--primary" for="fileUpload") Upload a file from this computer
   
-            div(data-file-upload='status' aria-live='assertive')
+            div(data-file-upload='status')
 
           +button--submit('button-submit', 'fileUploadSubmit', 'Submit', 'btn--primary')
 
