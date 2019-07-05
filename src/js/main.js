@@ -13,8 +13,17 @@
       fileContainer: document.getElementById('uploadContainer'),
       fileInput: document.getElementById('fileUpload'),
       fileIcon: document.querySelector('[data-file-upload-icon]'),
-      fileStatus: document.querySelector('[data-file-upload="status"]'),
-      fileSubmitBtn: document.getElementById('fileUploadSubmit')
+      fileStatus: document.getElementById('uploadStatus'),
+      fileUserText: document.getElementById('uploadText'),
+      fileSubmitBtn: document.getElementById('fileUploadSubmit'),
+      fileList: [],
+      filesToFormData: [],
+    }
+
+    // Remove required attribute from HTML input and change user instruction text
+    if(domElements.fileInput.hasAttribute('required')) {
+      domElements.fileInput.removeAttribute('required');
+      domElements.fileUserText.innerHTML = 'Drag and drop your file here <strong>or</strong>';
     }
 
     // ****************************** HANDLE UPLOADED FILE OBJECTS ************************************ //
@@ -23,15 +32,15 @@
     const fileUploadHandler = (filesObject) => {
 
       // Convert file object to an array
-      const fileList = [].slice.call(filesObject);
+      domElements.fileList = [].slice.call(filesObject);
 
-      if (fileList.length == 0) {
+      if (domElements.fileList.length == 0) {
         // Reset to core elements to their default state if no files array is empty
         fileUploadStatusReset();
 
       } else {
         // Check file(s) against imposed constraints (file size & file type)
-        fileUploadCheck(fileList);
+        fileUploadCheck(domElements.fileList);
       }
     }
 
@@ -45,15 +54,25 @@
       // Check files against format constraints
       fileUploadFormatCheck(fileList);
 
-      const fileUploadErrors = [];
+      // Filter all invalid files to new array
+      const filesInvalid = fileList.filter(file => file.sizeError || file.formatError);
+      const invalidArrSize = filesInvalid.length;
 
-      fileList.forEach((file) => {
-        if (file.sizeError || file.formatError) {
-          fileUploadErrors.push('true')
-        }
-      });
+      // Filter all valid files to new array
+      const filesValid = fileList.filter(file => !file.sizeError && !file.formatError);
+      const validArrSize = filesValid.length;
 
-      (fileUploadErrors.length > 0) ? fileUploadErrorReporting(fileList) : fileUploadSuccess(fileList);
+      // Assign valid files array to global object
+      if(validArrSize) { domElements.filesToFormData = filesValid; }
+
+      // Check status arrays and send to respective reporting functions
+      if(invalidArrSize && validArrSize) {
+        fileUploadReporting(filesInvalid, filesValid);
+      } else if(invalidArrSize && !validArrSize) {
+        fileUploadError(filesInvalid);
+      } else {
+        fileUploadSuccess(filesValid);
+      }
     }
 
     // ******************************** FILE FORMAT CHECK ********************************************* //
@@ -68,9 +87,9 @@
         const fileTypes = fileInputAccept.split(", ");
 
         fileList.forEach((file) => {
-          // Grab extension of file passed
+          // Grab extension of file passed finding last occurance of '.'
           let fileName = file.name;
-          let fileExtension = fileName.substring(fileName.lastIndexOf('.'), fileName.length) || fileName
+          let fileExtension = fileName.substring(fileName.lastIndexOf('.'), fileName.length) || fileName;
 
           // check if file extension exists in accepted fileTypes array and add status to file object
           if (fileTypes.indexOf(fileExtension) < 0) {
@@ -102,71 +121,133 @@
       });
     }
 
-    // **************************** REPORT FILE UPLOAD SUCCESS **************************************** //
+    // ************************** REPORT FILES WITH MIXED UPLOAD STATUS ******************************* //
+
+    // Function to maniplute file upload elements to report both valid and invalid file uploads
+    const fileUploadReporting = (filesInvalid, filesValid) => {
+
+      // Update form submit button attributes
+      submitBtnStateChange('enable');
+
+      // Remove all children from status message holder
+      removeChildElements(domElements.fileStatus);
+
+      // Update upload container, status message styles and upload icon
+      setStatusElements('standard', 'upload');
+
+      //**** Report Invaild Files ****//
+
+      // Create new status message holder
+      const statusHolderInvalid = createStatusHolder('warning');
+
+      // Create new status message and item list to status message holder
+      const statusMessageInvalid = createStatusItem('p');
+      statusMessageInvalid.innerText = 'The following files have errors and will not be uploaded:';
+      const statusListInvalid = createStatusMessageList(filesInvalid);
+
+      // Add message and list to holder and holder to DOM
+      statusHolderInvalid.appendChild(statusMessageInvalid);
+      statusHolderInvalid.appendChild(statusListInvalid);
+      domElements.fileStatus.appendChild(statusHolderInvalid);
+
+      //**** Report Vaild Files ****//
+
+      // Create new status message holder
+      const statusHolderValid = createStatusHolder('success');
+
+      // Create new status message and item list to status message holder
+      const statusMessageValid = createStatusItem('p');
+      statusMessageValid.innerText = 'The following files are valid and are ready to be uploaded:';
+      const statusListValid = createStatusMessageList(filesValid);
+
+      // Add message and list to holder and holder to DOM
+      statusHolderValid.appendChild(statusMessageValid);
+      statusHolderValid.appendChild(statusListValid);
+      domElements.fileStatus.appendChild(statusHolderValid);
+    }
+
+    // ************************** REPORT ALL FILE UPLOADS SUCCESS ************************************* //
 
     // Function to maniplute file upload elements to report valid file uploads
     const fileUploadSuccess = (fileList) => {
 
       // Update form submit button attributes
-      submitBtnStateChange('enable')
+      submitBtnStateChange('enable');
 
       // Remove all children from status message holder
       removeChildElements(domElements.fileStatus);
 
-      // Update upload container, status message styles and upload icon
+      // Update upload container and upload icon
       setStatusElements('success', 'uploaded');
 
-      // Construct and add new status message and item list to status message holder
+      // Create new status message holder
+      const statusHolder = createStatusHolder('success');
+
+      // Create new status message and item list to status message holder
       const statusMessage = createStatusItem('p');
       statusMessage.innerText = 'The following files are ready to be uploaded:';
+      const statusList = createStatusMessageList(fileList);
 
-      const statusList = document.createElement('ul');
-
-      fileList.forEach((file) => {
-        let statusListItem = createStatusItem('li');
-        statusListItem.innerText = `${file.name} (${file.size} bytes)`;
-        statusList.appendChild(statusListItem);
-      });
-
-      domElements.fileStatus.appendChild(statusMessage);
-      domElements.fileStatus.appendChild(statusList);
+      // Add message and list to holder and holder to DOM
+      statusHolder.appendChild(statusMessage);
+      statusHolder.appendChild(statusList);
+      domElements.fileStatus.appendChild(statusHolder);
     }
 
-    // **************************** REPORT FILE UPLOAD ERRORS ***************************************** //
+    // ************************ REPORT ALL FILE UPLOADS HAVE ERROR ************************************ //
 
     // Function to maniplute file upload elements to report file upload errors
-    const fileUploadErrorReporting = (fileList) => {
+    const fileUploadError = (fileList) => {
 
       // Update form submit button attributes
-      submitBtnStateChange('disable')
+      submitBtnStateChange('disable');
 
       // Remove all children from status message holder
       removeChildElements(domElements.fileStatus);
 
-      // Update upload container, status message styles and upload icon
+      // Update upload container and upload icon
       setStatusElements('warning', 'upload-error');
 
-      // Construct and add new status message and item list to status message holder
+      // Create new status message holder
+      const statusHolder = createStatusHolder('warning');
+
+      // Create new status message and item list to status message holder
       const statusMessage = createStatusItem('p');
       statusMessage.innerText = 'The following files have errors:';
+      const statusList = createStatusMessageList(fileList);
+
+      // Add message and list to holder and holder to DOM
+      statusHolder.appendChild(statusMessage);
+      statusHolder.appendChild(statusList);
+      domElements.fileStatus.appendChild(statusHolder);
+    }
+
+    // ***************************** CREATE STATUS MESSAGE LISTS ************************************** //
+
+    // Function to create list items detailing validity status of file uploads
+    const createStatusMessageList = (fileList) => {
 
       const statusList = document.createElement('ul');
 
       fileList.forEach((file) => {
         if(file.sizeError) {
           let statusListItem = createStatusItem('li');
-          statusListItem.innerText = `${file.name} is too big. Please make sure it is smaller than ${file.sizeError}`;
+          statusListItem.innerText = `${file.name} is larger than ${file.sizeError}`;
           statusList.appendChild(statusListItem);
         }
         if(file.formatError) {
           let statusListItem = createStatusItem('li');
-          statusListItem.innerText = `${file.name} is not an accepted file type. Please make sure the format of your file is ${file.formatError}`;
+          statusListItem.innerText = `${file.name} should be in a ${file.formatError} format`;
+          statusList.appendChild(statusListItem);
+        }
+        if(!file.sizeError && !file.formatError) {
+          let statusListItem = createStatusItem('li');
+          statusListItem.innerText = `${file.name} (${file.size} bytes)`;
           statusList.appendChild(statusListItem);
         }
       });
 
-      domElements.fileStatus.appendChild(statusMessage);
-      domElements.fileStatus.appendChild(statusList);
+      return statusList;
     }
 
     // ***************************** RESET FILE UPLOAD STATUS ***************************************** //
@@ -175,40 +256,70 @@
     const fileUploadStatusReset = () => {
 
       // Update form submit button attributes
-      submitBtnStateChange('enable')
+      submitBtnStateChange('enable');
 
       // Remove all children from status message holder
       removeChildElements(domElements.fileStatus);
 
-      // Update upload container, status message styles and upload icon
+      // Update upload container and upload icon
       setStatusElements('standard', 'upload');
 
-      // Construct and add new status message to status message holder
+      // Create new status message holder
+      const statusHolder = createStatusHolder('standard');
+
+      // Construct new status message
       const statusMessage = createStatusItem('p');
       statusMessage.innerText = 'No files selected';
-      domElements.fileStatus.appendChild(statusMessage);
+
+      // Add message to holder and holder to DOM
+      statusHolder.appendChild(statusMessage);
+      domElements.fileStatus.appendChild(statusHolder);
     }
 
     // ******************************* FILE SUBMISSION MESSAGE **************************************** //
 
+    // Function to handle form submission tasks including status message and form data creation
     const fileUploadSubmit = (event) => {
       // Prevent default actions on form
       preventDefaults(event);
 
-      // Reset file upload form
-      domElements.fileForm.reset();
+      if (domElements.fileList == 0) {
+        // Reset to core elements to their default state if no files array is empty
+        fileUploadStatusReset();
 
-      // Reset to core elements to their default state
-      fileUploadStatusReset();
+      } else {
 
-      // Remove all children from status message holder
-      removeChildElements(domElements.fileStatus);
+        // Remove all children from status message holder
+        removeChildElements(domElements.fileStatus);
 
-      // Construct and add new status message to status message holder
-      const statusMessage = createStatusItem('p');
-      statusMessage.innerText = 'Thank you for using my example file uploader. Your files have not been sent anywhere and the upload form has been reset for you to try again.';
+        // Update upload container and upload icon
+        setStatusElements('standard', 'upload');
 
-      domElements.fileStatus.appendChild(statusMessage);
+        // Create new status message holder
+        const statusHolder = createStatusHolder('success');
+
+        // Create new status message
+        const statusMessage = createStatusItem('p');
+        statusMessage.innerText = 'Thank you for using the file uploader. Your files have not been sent anywhere and the upload form has been reset for you to try again.';
+
+        // Add message to holder and holder to DOM
+        statusHolder.appendChild(statusMessage);
+        domElements.fileStatus.appendChild(statusHolder);
+
+        // Use valid file referenced in domElements.filesToFormData to construct / append to formData
+        // if(domElements.filesToFormData.length) {
+        //   const myFormData = new FormData();
+        //   domElements.filesToFormData.forEach((file, index) => {
+        //     myFormData.append('myFiles['+index+']', file, file.name);
+        //   });
+        //   for(let value of myFormData.values()) {
+        //      console.log(value);
+        //   }
+        // }
+
+        // Reset file upload form
+        domElements.fileForm.reset();
+      }
     }
 
     // *********************************** DRAG & DROP ************************************************ //
@@ -221,25 +332,31 @@
 
     // Function to style drag and drop container element when it gains focus
     const fileUploadDragFocus = (event) => {
-      domElements.fileContainer.className = 'upload-container status--focused';
+      setStatusElements('focused', 'upload');
     }
 
     // Function to style drag and drop container element when it loses focus
     const fileUploadDragBlur = (event) => {
-      domElements.fileContainer.className = 'upload-container status--standard';
+      setStatusElements('standard', 'upload');
     }
 
     // ********************************* HELPER FUNCTIONS ********************************************* //
 
-    // Update upload container, status message styles and upload icon
-    const setStatusElements (status, icon) => {
+    // Update upload container and upload icon styles
+    const setStatusElements = (status, icon) => {
       domElements.fileContainer.className = 'upload-container status--' + status;
       domElements.fileIcon.setAttribute('data-file-upload-icon', icon);
-      domElements.fileStatus.className ='status--highlight theme--' + status;
+    }
+
+    // Create file status message container
+    const createStatusHolder = (theme) => {
+      const statusHolder = document.createElement('div');
+      statusHolder.className ='status--highlight theme--' + theme;
+      return statusHolder;
     }
 
     // Create file status list items
-    const createStatusItem (element) => {
+    const createStatusItem = (element) => {
       const statusItem = document.createElement(element);
       statusItem.setAttribute('aria-live', 'assertive');
       statusItem.setAttribute('aria-role', 'alert');
@@ -247,13 +364,14 @@
     }
 
     // Update form submit button attributes
-    const submitBtnStateChange (value) => {
-    if(value == 'disable') {
-      domElements.fileSubmitBtn.setAttribute('disabled', 'disabled');
-      domElements.fileSubmitBtn.className = 'btn--disabled';
-    } else if (value == 'enable' && domElements.fileSubmitBtn.hasAttribute('disabled')) {
-      domElements.fileSubmitBtn.removeAttribute('disabled');
-      domElements.fileSubmitBtn.className = 'btn--primary';
+    const submitBtnStateChange = (value) => {
+      if(value == 'disable') {
+        domElements.fileSubmitBtn.setAttribute('disabled', 'disabled');
+        domElements.fileSubmitBtn.className = 'btn--disabled';
+      } else if (value == 'enable' && domElements.fileSubmitBtn.hasAttribute('disabled')) {
+        domElements.fileSubmitBtn.removeAttribute('disabled');
+        domElements.fileSubmitBtn.className = 'btn--primary';
+      }
     }
 
     // Helper function to prevent default action and bubbling on events

@@ -16,11 +16,11 @@ block content
               .upload--icon(data-file-upload-icon='upload')
                   include ../../images/upload-status.svg
               .upload--control
-                p Drag and drop your file here <strong>or</strong>
+                p#uploadText Upload a file from this computer
                 input(name="file-upload" id="fileUpload" type="file" data-file-size="2097152" accept=".pdf, .doc, .docx, .odt, .rtf, .txt"  multiple required)
                 label(class="btn--primary" for="fileUpload") Upload a file from this computer
   
-            div(data-file-upload='status')
+            div#uploadStatus
 
           +button--submit('button-submit', 'fileUploadSubmit', 'Submit', 'btn--primary')
 

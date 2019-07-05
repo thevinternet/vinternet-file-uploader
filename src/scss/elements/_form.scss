@@ -219,7 +219,7 @@ input[type="file"] {
     align-items: flex-start;
     text-align: left;
     .upload--icon {
-      margin: ($base-spacing-unit + 3px) $base-spacing-unit-medium 0 0;
+      margin: $base-spacing-unit $base-spacing-unit-medium 0 0;
     }
   }
   &.status--standard {
