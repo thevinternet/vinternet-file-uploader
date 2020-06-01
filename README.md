@@ -1,4 +1,5 @@
 # Vinternet Drag & Drop File Uploader
+
 An HTML file uploader which provides both a traditional file upload experience using the HTML input as well as drag and drop functionality. The solution is built with accessibility in mind and employs client side validation to the file size and file type uploaded which can be customised on the HTML input element directly.
 
 ## Requirements
@@ -10,7 +11,7 @@ An HTML file uploader which provides both a traditional file upload experience u
 
 * To install, clone from GitHub and run `npm install` in the cloned directory
 * Once install is complete, run `gulp local`
-* Browse to http://localhost:5000 to view application in your chosen browser
+* Browse to [http://localhost:5000](http://localhost:5000) to view application in your chosen browser
 
 ## Configuration
 
@@ -23,6 +24,7 @@ You can configure client side validation rules for the file types by changing th
 This application performs as expected across all evergreen browsers (Firefox, Chrome, Edge, Safari, etc) and will work correctly in versions of Internet Explorer 10 and above.
 
 ## Contributing
+
 If you wish to submit a bug fix or feature, you can create a pull request and it will be merged pending a code review.
 
 1. Fork the repository
